@@ -1,0 +1,566 @@
+SET PAGESIZE 34;
+create table emp(
+    empno number(4),
+    ename varchar2(10),
+    job varchar2(9),
+    mgr number(4),
+    sal number(7,2),
+    comm number(7,2),
+    deptno number(2)
+);
+INSERT INTO EMP VALUES
+        (7369, 'SMITH','CLERK',7902,800, 100, 20);
+INSERT INTO EMP VALUES
+        (7499, 'ALLEN','SALESMAN',7698,1600,300,30);
+INSERT INTO EMP VALUES
+        (7521, 'WARD','SALESMAN',7698,1250,500, 30);
+INSERT INTO EMP VALUES
+        (7566, 'JONES','MANAGER',7839, 2975, 200, 20);
+INSERT INTO EMP VALUES
+        (7654,'MARTIN','SALESMAN',7698,1250, 1400, 30);
+INSERT INTO EMP VALUES
+        (7698, 'BLAKE','MANAGER',7839,2850, 650, 30);
+INSERT INTO EMP VALUES
+        (7782, 'CLARK','MANAGER',7839,2450, 980, 10);
+INSERT INTO EMP VALUES
+        (7788, 'SCOTT','ANALYST',7566,3000, 150, 20);
+INSERT INTO EMP VALUES
+        (7839, 'KING',   'PRESIDENT', 1500, 5000, 1600, 10);
+        
+        
+select * from emp;
+
+
+SELECT *
+    FROM EMP
+    WHERE SAL > NULL
+    AND COMM IS NULL;
+    
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+WHERE DEPTNO = 10
+UNION
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+WHERE DEPTNO = 20;
+
+
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+WHERE DEPTNO = 10
+UNION
+SELECT SAL, JOB, DEPTNO, SAL
+FROM EMP
+WHERE DEPTNO = 20;
+
+
+
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+INTERSECT
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+WHERE DEPTNO = 10;
+
+
+SELECT UPPER('aPPLE'), LOWER('aPPLE'), INITCAP('aPPLE') FROM DUAL; -- 바로바로 테스트할때 DUAL 많이 쓴다.
+
+
+SELECT * 
+    FROM EMP
+    WHERE UPPER(ENAME) = UPPER('scott');
+
+select ename, length(ename)
+    from emp
+    where length(ename) >= 5;
+    
+    
+    
+SELECT JOB, SUBSTR(JOB, 1, 2) 
+FROM EMP;
+
+
+SELECT JOB, SUBSTR(JOB, 5)
+FROM EMP;
+
+
+SELECT '010-1234-5678' AS REPLACE_BEFORE,
+    REPLACE('010-1234-5678', '-', ' ') AS REPLACE_1,
+    REPLACE('010-1234-5678', '-') AS REPLACE_2
+    FROM DUAL;
+    
+    
+    
+SELECT 
+    RPAD('971225-',14,'*') AS RPAD_JMNO,
+    RPAD('010-1234-',13,'*') AS RPAD_PHONE
+    FROM DUAL;
+    
+
+SELECT CONCAT(EMPNO, ENAME),
+    CONCAT(EMPNO, CONCAT(' : ', ENAME))
+    FROM EMP
+    WHERE ENAME = 'SCOTT';
+    
+    SELECT EMPNO || ENAME,
+        EMPNO || ' : ' ||ENAME
+        FROM EMP;
+        
+        
+        
+SELECT ROUND(1234.5)
+FROM DUAL;
+
+SELECT ROUND(1234.5678,2)
+FROM DUAL;
+
+SELECT ROUND(1234,-1)
+FROM DUAL;
+
+SELECT ROUND(1235,-1)
+FROM DUAL;
+
+SELECT TRUNC(1235,-1)
+FROM DUAL;
+
+SELECT ROUND(1235,-1)
+FROM DUAL;
+
+SELECT CEIL(3.14)
+FROM DUAL;
+
+SELECT FLOOR(3.14)
+FROM DUAL;
+
+SELECT CEIL(-3.14)
+FROM DUAL;
+
+SELECT FLOOR(-3.14)
+FROM DUAL;
+
+SELECT 7/3, FLOOR(7/3), MOD(7,3)
+FROM DUAL;
+
+SELECT SYSDATE AS NOW,
+       SYSDATE-1 AS YESTERDAY,
+       SYSDATE+1 AS TOMORROW
+       FROM DUAL;
+       
+SELECT SYSDATE,
+       ADD_MONTHS(SYSDATE,3)
+       FROM DUAL;
+       
+SELECT SYSDATE,
+       NEXT_DAY(SYSDATE, '월요일'),
+       LAST_DAY(SYSDATE)
+       FROM DUAL;
+       
+SELECT EMPNO, ENAME, EMPNO + '500'
+FROM EMP
+WHERE ENAME = 'SCOTT';
+
+DESC EMP;
+
+--SELECT 'ABCD' + EMPNO, EMPNO
+--FROM EMP
+--WHERE ENAME = 'SCOTT';
+--       오류남
+
+
+
+SELECT TO_CHAR(SYSDATE, 'YYYY/MM/DD HH24:MI:SS') AS 현재날짜시간
+FROM DUAL;
+
+
+
+SELECT SYSDATE,
+       TO_CHAR(SYSDATE, 'MM') AS MM,
+       TO_CHAR(SYSDATE, 'MON', 'NLS_DATE_LANGUAGE = ENGLISH') AS MON_ENG
+       FROM DUAL;
+
+
+SELECT TO_NUMBER('1,300', '999,999') - TO_NUMBER('1,500', '999,999')
+FROM DUAL;
+
+SELECT TO_DATE('49/12/10', 'YY/MM/DD') AS YY_YEAR_49,
+       TO_DATE('49/12/10', 'RR/MM/DD') AS RR_YEAR_49,
+       TO_DATE('50/12/10', 'YY/MM/DD') AS YY_YEAR_50,
+       TO_DATE('50/12/10', 'RR/MM/DD') AS RR_YEAR_50
+       FROM DUAL;
+       
+       
+SELECT '10'+'20' FROM DUAL;
+
+SELECT 10+NULL FROM DUAL;
+
+SELECT 10 +NVL(NULL, 10) FROM DUAL; --NULL이면 10으로 바꿔치기..
+
+
+
+
+create table emp2(
+    empno number(4),
+    ename varchar2(10),
+    job varchar2(9),
+    mgr number(4),
+    sal number(7,2),
+    comm number(7,2),
+    deptno number(2)
+);
+INSERT INTO EMP2 VALUES
+        (7369, 'SMITH','CLERK',7902,800, 100, 20);
+INSERT INTO EMP2 VALUES
+        (7499, 'ALLEN','SALESMAN',7698,1600,NULL,30);
+INSERT INTO EMP2 VALUES
+        (7521, 'WARD','SALESMAN',7698,1250,500, 30);
+INSERT INTO EMP2 VALUES
+        (7566, 'JONES','MANAGER',7839, 2975, 200, 20);
+INSERT INTO EMP2 VALUES
+        (7654,'MARTIN','SALESMAN',7698,1250, 1400, 30);
+INSERT INTO EMP2 VALUES
+        (7698, 'BLAKE','MANAGER',7839,2850, NULL, 30);
+INSERT INTO EMP2 VALUES
+        (7782, 'CLARK','MANAGER',7839,2450, 980, 10);
+INSERT INTO EMP2 VALUES
+        (7788, 'SCOTT','ANALYST',7566,3000, NULL, 20);
+INSERT INTO EMP2 VALUES
+        (7839, 'KING',   'PRESIDENT', 1500, 5000, 1600, 10);
+        
+SELECT *  FROM EMP2;
+
+SELECT EMPNO, ENAME, SAL, COMM, SAL+COMM,
+    NVL(COMM, 0),
+    SAL+NVL(COMM,0)
+    FROM EMP2;
+    
+    
+SELECT EMPNO, ENAME, COMM,
+    NVL2(COMM, 'O', 'X'),
+    NVL2(COMM, SAL*12+COMM, SAL*12) AS ANNSAL
+    FROM EMP2;
+    
+    
+
+SELECT EMPNO, ENAME, JOB, SAL,
+        DECODE(JOB,
+                'MANAGER' , SAL*1.1,
+                'SALESMAN' , SAL*1.05,
+                'ANALYST' , SAL,
+                SAL*1.03) AS UPSAL
+        FROM EMP2;
+
+
+SELECT EMPNO, ENAME, JOB, SAL,
+    CASE JOB
+        WHEN 'MANAGER' THEN SAL*1.1
+        WHEN 'SALESMAN' THEN SAL*1.05
+        WHEN 'ANALYST' THEN SAL
+        ELSE SAL*1.03
+    END AS UPSAL
+    FROM EMP2;
+    
+    
+    
+SELECT EMPNO, ENAME, COMM,
+    CASE
+        WHEN COMM IS NULL THEN '해당사항 없음'
+        WHEN COMM = 0 THEN '수당없음'
+        WHEN COMM > 0 THEN '수당 : ' || COMM
+    END AS COMM_TEXT
+FROM EMP2;
+
+
+
+SELECT SUM(SAL)
+    FROM EMP2;
+
+SELECT SUM(COMM)
+    FROM EMP2;
+    
+SELECT SUM(DISTINCT COMM)
+    FROM EMP2;
+    
+SELECT SUM(DISTINCT SAL)
+FROM EMP2;
+
+SELECT SUM(SAL)
+FROM EMP2;
+
+SELECT SUM(ALL SAL)
+FROM EMP2;
+
+
+-- A사업부(7명)         B사업부(8)        C사업부(9)
+--개발,생산,지원   연구,생산,지원   연구,개발,생산,지원
+--홍1  홍3  홍6   이1   5    8      3  1    3    2
+--홍2  홍4  홍7    2    6 
+--     홍5        3     7
+--                4
+
+--ID, DEPT, JOB, NAME
+
+drop table emp3;
+create table emp3(
+    id number(4),
+    dept varchar2(20),
+    job varchar2(20),
+    name varchar2(20),
+    salary number
+);
+
+
+desc emp3;
+INSERT INTO EMP3 VALUES
+        (1, 'A사업부','개발','홍길동1',150);
+INSERT INTO EMP3 VALUES
+        (2, 'A사업부','개발','홍길동2',220);
+INSERT INTO EMP3 VALUES
+        (3, 'A사업부','생산','홍길동3',180);
+INSERT INTO EMP3 VALUES
+        (4, 'A사업부','생산','홍길동4',175);
+INSERT INTO EMP3 VALUES
+        (5, 'A사업부','생산','홍길동5',300);
+INSERT INTO EMP3 VALUES
+        (6, 'A사업부','지원','홍길동6',250);
+INSERT INTO EMP3 VALUES
+        (7, 'A사업부','지원','홍길동7',220);
+        
+
+INSERT INTO EMP3 VALUES
+        (8, 'B사업부','연구','이순신1', 500);
+INSERT INTO EMP3 VALUES
+        (9, 'B사업부','연구','이순신2', 300);
+INSERT INTO EMP3 VALUES
+        (10, 'B사업부','연구','이순신3', 250);
+INSERT INTO EMP3 VALUES
+        (11, 'B사업부','연구','이순신4', 300);
+INSERT INTO EMP3 VALUES
+        (12, 'B사업부','생산','이순신5', 280);
+INSERT INTO EMP3 VALUES
+        (13, 'B사업부','생산','이순신6', 120);
+INSERT INTO EMP3 VALUES
+        (14, 'B사업부','생산','이순신7', 350);
+INSERT INTO EMP3 VALUES
+        (15, 'B사업부','지원','이순신8', 220);
+        
+
+
+INSERT INTO EMP3 VALUES
+        (16, 'C사업부','연구','강감찬1',220);
+INSERT INTO EMP3 VALUES
+        (17, 'C사업부','연구','강감찬2',250);
+INSERT INTO EMP3 VALUES
+        (18, 'C사업부','연구','강감찬3',230);
+INSERT INTO EMP3 VALUES
+        (19, 'C사업부','개발','강감찬4',280);
+INSERT INTO EMP3 VALUES
+        (20, 'C사업부','생산','강감찬5',180);
+INSERT INTO EMP3 VALUES
+        (21, 'C사업부','생산','강감찬6',240);
+INSERT INTO EMP3 VALUES
+        (22, 'C사업부','생산','강감찬7',450);
+INSERT INTO EMP3 VALUES
+        (23, 'C사업부','지원','강감찬8',320);
+INSERT INTO EMP3 VALUES
+        (24, 'C사업부','지원','강감찬9',260);
+        
+        
+SELECT * FROM EMP3;
+
+SELECT DEPT, COUNT(*)
+    FROM EMP3
+    GROUP BY DEPT;
+    
+--group by : ~별로 집계함수 사용하는데 group by 쓴다.
+
+
+
+select dept, avg(salary)
+    from emp3
+    group by dept;
+    
+
+
+SELECT DEPT, JOB, SUM(SALARY), AVG(SALARY)
+    FROM EMP3
+    GROUP BY DEPT, JOB
+    ORDER BY DEPT, JOB;
+    
+    
+SELECT DEPT, JOB, AVG(SALARY)
+    FROM EMP3
+    WHERE SALARY <= 400
+    GROUP BY DEPT, JOB
+    HAVING AVG(SALARY) >= 200
+    ORDER BY DEPT, JOB;
+    
+SELECT DEPT, JOB, AVG(SALARY)
+    FROM EMP3
+    WHERE SALARY <= 300
+    GROUP BY DEPT,JOB
+    HAVING AVG(SALARY) >= 250
+    ORDER BY DEPT, JOB;
+
+
+  
+    
+SELECT DEPT, JOB, COUNT(SALARY) 
+    FROM EMP3
+    GROUP BY ROLLUP(DEPT, JOB); --부서총계, 업무총계
+
+
+SELECT DEPT, JOB, COUNT(SALARY) 
+    FROM EMP3
+    GROUP BY DEPT, ROLLUP(JOB);  --부서별로 업무총계
+    
+SELECT DEPT, JOB, COUNT(SALARY) 
+    FROM EMP3
+    GROUP BY JOB, ROLLUP(DEPT); --업무별로 부서총계
+    
+    
+SELECT DEPT, COUNT(*) 
+    FROM EMP3
+    GROUP BY ROLLUP(DEPT);   
+
+
+SELECT JOB, COUNT(*) 
+    FROM EMP3
+    GROUP BY ROLLUP(JOB);
+    
+    
+SELECT DEPT, JOB, COUNT(*) 
+    FROM EMP3
+    GROUP BY CUBE(DEPT, JOB) -- 경우의 수를 다보여준다. ROLLUP(JOB), ROLLUP(DEPT), ROLLUP(DEPT,JOB) 모두 합친거
+    ORDER BY DEPT, JOB;
+    
+SELECT DEPT, JOB, COUNT(*)
+    FROM EMP3
+    GROUP BY DEPT, ROLLUP(JOB);
+
+
+SELECT JOB, COUNT(*)
+    FROM EMP3
+    GROUP BY ROLLUP(JOB);
+    
+    
+    
+    
+    
+SELECT DEPT, JOB, COUNT(*)
+    FROM EMP3
+    GROUP BY ROLLUP(DEPT, JOB)
+UNION
+SELECT DEPT, NULL, COUNT(*)
+    FROM EMP3
+    GROUP BY ROLLUP(DEPT)
+UNION
+SELECT NULL, JOB, COUNT(*)
+    FROM EMP3
+    GROUP BY ROLLUP(JOB);
+    
+--이 세개 합친게 CUBE랑 똑같다.
+
+SELECT DEPT, JOB, COUNT(*)
+    FROM EMP3
+    GROUP BY CUBE(DEPT, JOB);
+    
+    
+SELECT DEPT, NULL, COUNT(*)
+    FROM EMP3
+    GROUP BY DEPT
+UNION
+SELECT NULL, JOB, COUNT(*)
+    FROM EMP3
+    GROUP BY JOB;
+    
+    
+    --이런 결과가 나타나도록 하는게 GROUPING SETS
+    
+SELECT DEPT,JOB,COUNT(*)
+    FROM EMP3
+    GROUP BY GROUPING SETS(DEPT, JOB)
+    ORDER BY DEPT, JOB;
+
+
+
+--SELECT DEPT, JOB, COUNT(*),
+----            GROUPING(DEPT),
+--            GROUPING(JOB)
+--        FROM EMP3
+--    GROUP BY ROLLUP(DEPT, JOB)
+--    ORDER BY DEPT, JOB;
+    
+    
+
+--SELECT DEPT, 
+--              DECODE(
+--                GROUPING(JOB),
+--                0,  JOB,
+--                1, '총인원'
+--              ) AS JOB,
+--              COUNT(*)
+--        FROM EMP3
+--    GROUP BY ROLLUP(DEPT, JOB);
+
+
+SELECT DEPT,
+              DECODE(
+                GROUPING(JOB)*2+GROUPING(DEPT),
+                0,  JOB,
+                1, '',
+                2, '총 인 원',
+                3, '회 사 총 인 원'
+              ) AS JOB,
+              COUNT(*)
+        FROM EMP3
+    GROUP BY ROLLUP(DEPT, JOB);
+
+--위에거랑 똑같다.
+SELECT DEPT,
+              DECODE(
+                GROUPING_ID(JOB, DEPT),
+                0,  JOB,
+                2, '총 인 원',
+                3, '회 사 총 인 원'
+              ) AS JOB,
+              COUNT(*),
+              GROUPING_ID(JOB, DEPT)
+        FROM EMP3
+    GROUP BY ROLLUP(DEPT, JOB);
+  
+  
+SELECT DEPT,
+        LISTAGG(NAME, ', ')
+        WITHIN GROUP(ORDER BY SALARY DESC) AS ENAMES
+    FROM EMP3
+    GROUP BY DEPT;
+    
+    
+CREATE TABLE EMP4(
+    DEPT VARCHAR(20),
+    SAL NUMBER,
+    JOB VARCHAR(20)
+    );
+    
+DESC EMP4;
+
+INSERT INTO EMP4 VALUES('A사업부',100,'생산');
+INSERT INTO EMP4 VALUES('A사업부',110,'지원');
+INSERT INTO EMP4 VALUES('A사업부',120,'생산');
+INSERT INTO EMP4 VALUES('B사업부',130,'지원');
+INSERT INTO EMP4 VALUES('B사업부',140,'생산');
+INSERT INTO EMP4 VALUES('B사업부',150,'지원');
+INSERT INTO EMP4 VALUES('C사업부',160,'생산');
+INSERT INTO EMP4 VALUES('C사업부',170,'지원');
+INSERT INTO EMP4 VALUES('C사업부',180,'생산');
+
+SELECT * FROM EMP4;
+
+
+        
+SELECT * FROM EMP4
+    PIVOT(
+        SUM(SAL) -- 통계함수 반드시 필요
+        FOR JOB --  그룹에 해당
+        IN('생산', '지원')
+        );
