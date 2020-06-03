@@ -156,9 +156,9 @@ CREATE TABLE DEPT(
     LOC VARCHAR(20)
     );
     
-INSERT INTO DEPT VALUES(20,'RESEARCH', 'DALLAS');
-INSERT INTO DEPT VALUES(30,'SALES', 'DALLAS');
-INSERT INTO DEPT VALUES(40,'MANAGEMENT', 'DALLAS');
+INSERT INTO DEPT VALUES(20,'영업', 'DALLAS');
+INSERT INTO DEPT VALUES(30,'관리', 'DALLAS');
+INSERT INTO DEPT VALUES(40,'지원', 'DALLAS');
 
 
 SELECT *
@@ -169,3 +169,223 @@ SELECT *
                         FROM EMP);
                         
                         COMMIT;
+                        
+                        
+--평균 급여보다 적은 직원 검색
+SELECT *
+    FROM EMP
+    WHERE SAL < (SELECT AVG(SAL) 
+                    FROM EMP);
+--평균 급여보다 적은 영업부서 직원 검색
+SELECT EMPNO,ENAME
+    FROM EMP
+    WHERE SAL < (SELECT AVG(SAL) 
+                    FROM EMP)
+      AND DEPTNO = (SELECT DEPTNO 
+                        FROM DEPT
+                        WHERE DNAME = '영업');
+--평균 급여보다 적은 영업부서 직원의 상세 정보 검색
+SELECT *
+    FROM EMP
+    WHERE SAL < (SELECT AVG(SAL) 
+                    FROM EMP)
+      AND DEPTNO = (SELECT DEPTNO 
+                        FROM DEPT
+                        WHERE DNAME = '영업');
+                        
+                        
+
+
+DROP TABLE TAB03;
+CREATE TABLE TAB03(
+    ID NUMBER,
+    DEPT VARCHAR(20),
+    LOC VARCHAR(20),
+    NAME VARCHAR(20)
+    );
+
+--인덱스 테이블    
+INSERT INTO TAB03 VALUES(10,'경영','부산','호랑이');
+INSERT INTO TAB03 VALUES(20,'영업','서울','코끼리');
+
+
+SELECT * FROM TAB03;
+
+
+--실행 결과가 여러개인 다중행 서브쿼리
+
+SELECT *
+    FROM EMP
+    WHERE SAL IN (1000,2000,3000);
+    
+SELECT *
+    FROM EMP
+    WHERE SAL > ANY(2000);
+    
+
+SELECT *
+    FROM EMP
+    WHERE SAL IN (SELECT MAX(SAL)
+                        FROM EMP
+                        GROUP BY DEPTNO);
+                        
+SELECT MAX(SAL), DEPTNO
+    FROM EMP
+    GROUP BY DEPTNO
+    ORDER BY DEPTNO;
+    
+--**********************important***************************--
+--      > all                               < any               무조건 max 취급한다.
+--ex) sal > all(100,200,300)            sal < any(100,200,300)          300선택
+--그 외는 모두 min 취급.
+--ex) sal < all (100,200,300)       sal > any(100,200,300) 모두 min       100선택
+
+
+drop table empl;
+create table empl(
+    sal number);
+    
+insert into empl values(50);
+insert into empl values(100);
+insert into empl values(150);
+insert into empl values(200);
+insert into empl values(250);
+insert into empl values(300);
+insert into empl values(350);
+
+select * from empl;
+
+
+--1
+select *
+    from empl
+    where sal > all(100,200,300);
+--2    
+select *
+    from empl
+    where sal < any(100,200,300);
+--3        
+select *
+    from empl
+    where sal < all(100,200,300);
+--4    
+select *
+    from empl
+    where sal > any(100,200,300);
+    
+    
+
+select *
+    from emp
+    where sal < any(select sal
+                        from emp
+                        where deptno = 30);
+                        
+                        
+select *
+    from emp
+    where sal > any (select sal
+                        from emp
+                        where deptno = 30);
+    
+
+select *
+    from emp
+    where sal < all (select sal
+                        from emp
+                        where deptno = 30);
+                        
+                        
+select * 
+    from emp
+    where sal > all (select sal
+                        from emp
+                        where deptno = 30);
+                        
+                        
+--생물학과 물리과 화학과 3명씩
+
+--학생들은 국어, 수학, 영어에 대한 점수를 갖고있다.
+
+--화학과 학생들의 3과목 총점과 동일한 학생들을 전부 출력
+
+drop table student;
+create table student(
+    name varchar(20),
+    math_score number,
+    korean_score number,
+    english_score number,
+    dept varchar(20),
+    grade number
+    );
+
+
+insert into student values('장재영',70,65,50,'생물학과',1);
+insert into student values('최재형',90,85,40,'물리학과',2);
+insert into student values('김준호',70,70,70,'화학과',1);
+insert into student values('황승빈',50,65,40,'생물학과',1);
+insert into student values('김준영',90,80,40,'물리학과',2);
+insert into student values('오지영',60,95,80,'화학과',1);
+insert into student values('박진우',30,55,70,'생물학과',2);
+insert into student values('차민석',80,75,80,'물리학과',1);
+insert into student values('이형규',40,25,30,'화학과',1);
+
+select * 
+    from student
+    where (math_score + english_score + korean_score) in (select (math_score + english_score + korean_score) 
+                                                             from student
+                                                             where dept = '화학과')
+                                                             --210,235,95
+    and dept != '화학과';
+
+    
+select (math_score + english_score + korean_score) 
+    from student
+    where dept = '화학과';
+    
+    
+    
+--화학과 학생들과 같은 학년에서 총점이 동일한 학생들을 출력.쌍으로 해결..
+
+select * 
+    from student
+    where ( (math_score + english_score + korean_score), grade ) 
+    in (select (math_score + english_score + korean_score), grade
+            from student
+            where dept = '화학과')
+    and dept != '화학과';
+
+
+
+
+DROP TABLE EMP;
+CREATE TABLE EMP(
+    ENAME VARCHAR(20),
+    SAL NUMBER);
+    
+   
+INSERT INTO EMP VALUES('SMITH', 10);
+INSERT INTO EMP VALUES('ALLEN', 20);
+INSERT INTO EMP VALUES('WARD', 30);
+INSERT INTO EMP VALUES('JONES', 40);
+INSERT INTO EMP VALUES('MARTIN', 50);
+
+select * from emp;
+
+select * from (select * 
+                from emp
+                where sal > 30 ) t1; -- 서브쿼리보단 inline view 라고 한다. from 안에 쿼리가 들어갈때.
+-- WITH를 통해 VIEW 화 시킨다
+-- WITH부터 명령문이 끝나는 ; 까지가 유효범위이다.
+with
+t1 as( select * 
+                from emp
+                where sal > 30 ),
+t2 as ( select *
+        from emp
+        where sal < 30)
+select * from t1,t2;
+
+
+
+
