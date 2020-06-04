@@ -1,0 +1,319 @@
+SET TIMING ON;
+
+DROP TABLE TAB01;
+CREATE TABLE TAB01(
+    ID NUMBER,
+    ENO NUMBER, --사원번호
+    NAME VARCHAR(20)
+    );
+
+
+INSERT INTO TAB01 VALUES(1,10,'홍길동1');   
+INSERT INTO TAB01 VALUES(2,10,'홍길동1');   -- 2번을 삭제할 예정, 사원번호가 중복돼있으니깐
+INSERT INTO TAB01 VALUES(3,20,'홍길동2');
+INSERT INTO TAB01 VALUES(4,20,'홍길동2');
+INSERT INTO TAB01 VALUES(5,20,'홍길동2');   
+INSERT INTO TAB01 VALUES(6,30,'홍길동3');
+INSERT INTO TAB01 VALUES(7,30,'홍길동3');
+INSERT INTO TAB01 VALUES(8,40,'홍길동4');
+INSERT INTO TAB01 VALUES(9,50,'홍길동5');
+INSERT INTO TAB01 VALUES(10,50,'홍길동5');
+
+
+SELECT * FROM TAB01;
+
+
+--DB관리자가 중복된 데이터를 걸러보자... 이런상황
+--2번, 4번5번, 7번, 10번을 날릴거다.
+
+
+
+
+--출력결과:삭제할 데이터를 출력
+SELECT *
+    FROM TAB01
+    WHERE (ENO,ID) NOT IN (SELECT ENO,MIN(ID)
+                        FROM TAB01
+                        GROUP BY ENO);
+   
+
+--출력결과: 중복 제거하고 남은 데이터 출력
+SELECT *
+    FROM TAB01
+    WHERE (ENO,ID) IN (SELECT ENO,MIN(ID)
+                        FROM TAB01
+                        GROUP BY ENO);
+                        
+
+SELECT ENO,MIN(ID)
+FROM TAB01
+GROUP BY ENO;
+
+SELECT * FROM TAB01;
+                   
+                   
+SELECT ID
+    FROM TAB01
+    WHERE (ENO,ID) NOT IN (SELECT ENO,MIN(ID)
+                        FROM TAB01
+                        GROUP BY ENO);    
+DELETE FROM TAB01
+WHERE ID IN (SELECT ID
+                FROM TAB01
+                WHERE (ENO,ID) NOT IN (SELECT ENO,MIN(ID)
+                                        FROM TAB01
+                                        GROUP BY ENO));
+                                        
+SELECT * FROM TAB01;
+                        
+                        
+DROP TABLE TAB02;
+CREATE TABLE TAB02(
+    ID NUMBER,
+    SAL NUMBER
+    );
+    
+INSERT INTO TAB02 VALUES(1,10);
+INSERT INTO TAB02 VALUES(2,20);
+INSERT INTO TAB02 VALUES(3,30);
+INSERT INTO TAB02 VALUES(4,40);
+INSERT INTO TAB02 VALUES(5,50);
+
+SELECT * FROM TAB02;
+
+--SUMOVER 검색
+
+SELECT SAL AS 급여,
+        SUM(SAL) OVER(ORDER BY ID 
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS 누적
+        FROM TAB02;
+
+
+DROP TABLE TAB03;
+CREATE TABLE TAB03 (
+    ID NUMBER,
+    SAL NUMBER
+    );
+    
+INSERT INTO TAB03 VALUES(1,100);
+INSERT INTO TAB03 VALUES(2,200);
+INSERT INTO TAB03 VALUES(3,300);
+INSERT INTO TAB03 VALUES(4,400);
+
+COMMIT;
+SELECT * FROM TAB03;
+ROLLBACK;
+
+SELECT * FROM TAB03;
+
+
+COMMIT;
+
+INSERT INTO TAB03 VALUES(5,500);
+
+SELECT * FROM TAB03;
+
+ROLLBACK; --가장 최근에 COMMIT 된 곳으로 롤백
+
+SELECT * FROM TAB03;
+
+
+
+
+--트랜잭션:반드시 시작과 끝이 있는 최소한의 작업단위.
+
+--은행시스템을 생각하면 시작은 금액을 이체 해서 출금 시키는것, 끝은 금액이 다른 계좌에 입금되는것.
+--시작과 끝을 못보면 무조건 롤백시킨다.
+SELECT * FROM TAB03;
+
+ALTER TABLE TAB03
+    ADD DEPT VARCHAR(20);
+    
+DESC TAB03;
+
+SELECT * FROM TAB03;
+
+ALTER TABLE TAB03
+    RENAME COLUMN SAL TO SALARY;
+    
+DESC TAB03;
+
+ALTER TABLE TAB03
+    RENAME COLUMN ID TO IDENTIFICATION;
+    
+SELECT * FROM TAB03;
+
+RENAME TAB03 TO TAB3;
+
+SELECT * FROM TAB03;
+
+SELECT * FROM TAB3;
+
+COMMIT;
+
+SELECT * FROM TAB3;
+
+
+
+
+DROP TABLE TAB04;
+CREATE TABLE TAB04(
+    NAME VARCHAR(20),
+    SAL NUMBER
+    );
+    
+INSERT INTO TAB04 VALUES('장재영', 500);
+INSERT INTO TAB04 VALUES('최재형', 200);
+INSERT INTO TAB04 VALUES('김준호', 300);
+INSERT INTO TAB04 VALUES('오지영', 400);
+INSERT INTO TAB04 VALUES('홍길동', 300);
+
+SELECT * FROM TAB04;
+
+SELECT *
+FROM TAB04
+WHERE SAL > (SELECT SAL
+                FROM TAB04
+                WHERE NAME = '홍길동');
+                
+
+DROP VIEW VIEW01;
+CREATE VIEW VIEW01
+    AS(
+        SELECT SAL
+            FROM TAB04
+            WHERE NAME = '홍길동'
+      );
+
+
+SELECT *
+    FROM VIEW01;
+    
+    
+SELECT *
+FROM TAB04
+WHERE SAL > (SELECT * FROM VIEW01);   
+
+
+--인라인 뷰를 사용한 TOP-N SQL문
+
+
+--CREATE문을 통해 객체로 만들어지는 뷰 외에 SQL문에서 일회성으로 만들어서 사용하는 뷰를 인라인 뷰라고 합니다.
+--SELECT문에서 사용되는 서브쿼리, WITH절에서 미리 이름을 정의해 두고 사용하는 SELECT문 등이 이에 해당합니다.
+
+
+SELECT ROWNUM, E.*
+FROM EMP E;
+
+DESC EMP;
+
+SELECT ROWNUM, E.*
+    FROM EMP E
+    ORDER BY SAL DESC;
+    
+SELECT ROWNUM, E.*
+    FROM(SELECT *
+            FROM EMP E
+            ORDER BY SAL DESC) E;
+
+
+SELECT *
+            FROM EMP E
+            ORDER BY SAL DESC;
+            
+            
+WITH E AS (SELECT * FROM EMP ORDER BY SAL DESC)
+SELECT ROWNUM, E.*
+FROM E;
+
+
+SELECT ROWNUM, E.*
+    FROM (SELECT *
+            FROM EMP E
+            ORDER BY SAL DESC) E
+     WHERE ROWNUM <= 3;
+     
+    WITH E AS (SELECT * FROM EMP ORDER BY SAL DESC)
+    SELECT ROWNUM, E.*
+    FROM E
+    WHERE ROWNUM <= 3;
+    
+SELECT *
+    FROM USER_SEQUENCES;
+    
+SELECT * FROM DEPT;
+
+SELECT * FROM DEPT_SEQUENCE;
+
+CREATE SEQUENCE SEQ_DEPT_SEQUENCE
+    INCREMENT BY 10
+    START WITH 10
+    MAXVALUE 90
+    MINVALUE 0
+    NOCYCLE
+    CACHE 2;
+    
+    
+    SELECT *
+    FROM USER_SEQUENCES;
+    
+    
+    INSERT INTO DEPT_SEQUENCE (DEPTNO, DNAME, LOC)
+    VALUES (SEQ_DEPT_SEQUENCE.NEXTVAL, 'DATABASE', 'SEOUL');
+    
+    SELECT * FROM DEPT_SEQUENCE ORDER BY DEPTNO;
+    
+    
+    SELECT SEQ_DEPT_SEQUENCE.CURRVAL FROM DUAL;
+    
+    SELECT * FROM USER_SEQUENCES;
+    
+    --데이타에 부여된 규칙 : 데이타의 무결성
+    --스키마:데이타필드에 제약조건까지 명시한 것을 말한다.
+    
+    
+
+DROP TABLE TAB01;
+CREATE TABLE TAB01(
+        SAL NUMBER(10)
+);
+INSERT INTO TAB01 VALUES(1);
+INSERT INTO TAB01 VALUES(2);
+INSERT INTO TAB01 VALUES(3);
+INSERT INTO TAB01 VALUES(4);
+INSERT INTO TAB01 VALUES(5);
+INSERT INTO TAB01 VALUES(6);
+INSERT INTO TAB01 VALUES(7);
+INSERT INTO TAB01 VALUES(8);
+
+
+SELECT *
+FROM TAB01 T1
+WHERE 3 > (SELECT COUNT(*)
+            FROM TAB01 T2
+            WHERE T2.SAL > T1.SAL);
+            
+            
+            
+DROP TABLE TAB02;
+CREATE TABLE TAB02(
+        SAL NUMBER(10)
+);
+INSERT INTO TAB01 VALUES(1);
+INSERT INTO TAB01 VALUES(2);
+INSERT INTO TAB01 VALUES(3);
+INSERT INTO TAB01 VALUES(6);
+INSERT INTO TAB01 VALUES(6);
+INSERT INTO TAB01 VALUES(6);
+INSERT INTO TAB01 VALUES(7);
+INSERT INTO TAB01 VALUES(8);
+
+--점수가 높은애 1~3등 출력해라.
+
+
+SELECT *
+FROM TAB01 T1
+WHERE 3 > (SELECT COUNT(*)
+            FROM TAB01 T2
+            WHERE T2.SAL > T1.SAL);
+            
